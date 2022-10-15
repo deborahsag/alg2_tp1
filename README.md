@@ -4,4 +4,5 @@ Disciplina Algoritmos II - 2022/2
 
 Autoras:
   Deborah Santos Andrade Guimarães - 2014113810
+  
   Luísa Vasconcelos de Castro Toledo
