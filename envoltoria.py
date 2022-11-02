@@ -1,12 +1,40 @@
+class Ponto:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def print_ponto(self):
+        print(self.x, self.y)
+
+
+def print_pontos(pontos):
+    for p in pontos:
+        p.print_ponto()
+
+
+def lista_pontos(S):
+    """Transforma uma lista de pontos representados por tuplas em uma lista da classe Ponto.
+    
+    Entrada:
+    S - uma lista de pontos representados por tuplas
+    Saida:
+    pontos - uma lista de elementos da classe Ponto
+    """
+    pontos = []
+    for i in range(len(S)):
+        pontos.append(Ponto(S[i][0], S[i][1]))
+    return pontos
+
+
 def ancora(pontos):
     """Encontra o ponto de menor y em um conjunto de pontos.
 
     Entrada:
-    pontos - lista de pontos representados por listas de tamanho 2
-    Saida:
-    i0 - indice do ponto de menor y
+    pontos - lista de elementos da classe Ponto
+    Retorna:
+    i0 - indice do Ponto de menor y
     """
-    p0 = min(pontos, key = lambda x: x[1])
+    p0 = min(pontos, key = lambda ponto: ponto.y)
     i0 = pontos.index(p0)
     return i0
 
@@ -15,13 +43,13 @@ def orientacao(pi, pj , pk):
     """Encontra a orientacao dos segmentos de reta pi-pj-pk.
     
     Entrada:
-    pi, pj, pk - pontos representados por listas de tamanho 2
+    pi, pj, pk - pontos da classe Ponto
     Retorna:
     0 - se os pontos sao colineares
     1 - se estao em orientacao horaria
     2 - se estao em orientacao anti horaria
     """
-    valor = (float(pj[1] - pi[1]) * (pk[0] - pj[0])) - (float(pj[0] - pi[0]) * (pk[1] - pj[1]))
+    valor =  (float(pj.y - pi.y) * (pk.x - pj.x)) - (float(pj.x - pi.x) * (pk.y - pj.y))
     if valor > 0:
         # Sentido horario
         return 1
@@ -37,9 +65,9 @@ def envoltoria_convexa(pontos):
     """Encontra a envoltoria convexa de um conjunto de pontos.
     
     Entrada:
-    pontos - lista de pontos representados por listas de tamanho 2
+    pontos - lista de pontos da classe Ponto
     Saida:
-    H - lista dos pontos da envoltoria convexa
+    H - lista de pontos da classe Ponto representando a envoltoria convexa
     """
 
     S = pontos
@@ -61,7 +89,7 @@ def envoltoria_convexa(pontos):
 
         # k final eh o indice do ponto a ser incluido na envoltoria, que eh o ponto de referencia da proxima iteracao
         i = k
-
+        
         # Interrompemos o algoritmo se chegamos ao primeiro ponto
         if i == i0: 
             break
