@@ -51,8 +51,10 @@ def inclinacao(pi, pj):
     yd = pj.y - pi.y
     xd = pj.x - pi.x
     if xd == 0:
-        return 0.1
+        return 1000     # tolerancia para retas verticais
     slope = yd / xd
+    if slope == 0:
+        slope = 0.001   # tolerancia para retas horizontais
     return slope
 
 
@@ -81,3 +83,4 @@ def classificador(p, a, b):
         return 'red'
     else:
         return None     # o ponto esta exatamente em cima da linha e deve ser descartado
+        
