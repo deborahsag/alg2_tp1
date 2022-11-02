@@ -71,3 +71,13 @@ def equacao_modelo(Ci, Cj):
     a = - 1 / slope
     b = pm.y - a * pm.x
     return a, b
+
+
+def classificador(p, a, b):
+    linha = a * p.x + b
+    if p.y > linha:
+        return 'blue'
+    elif p.y < linha:
+        return 'red'
+    else:
+        return None     # o ponto esta exatamente em cima da linha e deve ser descartado
