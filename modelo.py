@@ -27,5 +27,47 @@ def menor_distancia(Ci, Cj):
     return min_i, min_j
 
 def ponto_medio(pi, pj):
+    """Retorna o ponto medio de um segmento de reta.
+    
+    Entrada:
+    pi, pj - pontos da classe ponto
+    Saida:
+    p - o ponto medio do segmento pi-pj
+    """
     x = (pi.x + pj.x) / 2
     y = (pi.y + pj.y) / 2
+    p = Ponto(x, y)
+    return p
+
+
+def inclinacao(pi, pj):
+    """Retorna a inclinacao da reta que passa por dois pontos.
+    
+    Entrada:
+    pi, pj - pontos da classe Ponto
+    Saida:
+    slope - inclinacao da reta que passa por pi e pj
+    """
+    yd = pj.y - pi.y
+    xd = pj.x - pi.x
+    if xd == 0:
+        return 0.1
+    slope = yd / xd
+    return slope
+
+
+def equacao_modelo(Ci, Cj):
+    """Retorna a equacao do modelo dadas duas envoltorias convexas.
+    
+    Entrada:
+    Ci, Cj - envoltorias convexas (lists da classe Ponto)
+    Saida:
+    a - coeficiente angular da reta
+    b - coeficiente linear da reta
+    """
+    pi, pj = menor_distancia(Ci, Cj)
+    slope = inclinacao(pi, pj)
+    pm = ponto_medio(pi, pj)
+    a = - 1 / slope
+    b = pm.y - a * pm.x
+    return a, b
