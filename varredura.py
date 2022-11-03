@@ -98,7 +98,7 @@ def varredura_linear (lista_pontos):
             p = segmentos[j].inicio
             ind = p.y
             T.__setitem__(ind, segmentos[j])
-            #checar se existe vizinho e se tem intercessao
+            #checar se existe vizinho e se tem interseção
             #Se for o primeiro evento não haverá vizinhos
             if i == 0:
                 break
@@ -112,6 +112,7 @@ def varredura_linear (lista_pontos):
                 else: 
                     return r
         elif eventos[i].posicao == "fim":
+            #Se o evento for o fim de um segmento, checa se seus vizinhos se interceptam e retira segmento da árvore
             #se os dois vizinhos do segmento existem e se interceptam
             try: 
                 if (interceptam(T.prev_item(ind), T.succ_item(ind))):
