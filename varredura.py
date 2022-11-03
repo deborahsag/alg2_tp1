@@ -1,39 +1,14 @@
-from http.client import INSUFFICIENT_STORAGE
 from envoltoria import *
-from queue import PriorityQueue
-
-class Ponto:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def print_ponto(self):
-        print(self.x, self.y)
-
-
-def print_pontos(pontos):
-    for p in pontos:
-        p.print_ponto()
-
-def lista_pontos(S):
-    """Transforma uma lista de pontos representados por tuplas em uma lista da classe Ponto.
-    
-    Entrada:
-    S - uma lista de pontos representados por tuplas
-    Saida:
-    pontos - uma lista de elementos da classe Ponto
-    """
-    pontos = []
-    for i in range(len(S)):
-        pontos.append(Ponto(S[i][0], S[i][1]))
-    return pontos
+from bintrees import *
 
 class Segmento:
+    #Um Segmento tem um ponto inicial e um ponto final
     def __init__(self, ponto1, ponto2):
         self.inicio = ponto1
         self.fim = ponto2 
     
     def ocorrencia(self, ponto):
+        #Verifica se o ponto é incial ou final
         if self.inicio == ponto:
             o = "inicio"
             return o
@@ -42,26 +17,25 @@ class Segmento:
             return o
 
 def lista_segmentos(L):
+    #Cria uma lista de segmentos a partir de uma lista de pontos
     segmentos = []
     for i in range(len(L)):
         segmentos.append(Segmento(L[i], L[i+1]))
     return segmentos
 
 class Evento:
+    #Um evento é composto por um ponto, sua posição(inicio ou fim) e o índice do segmento ao qual ele pertence na lista de segmentos
     def __init__(self, ponto, posicao, indice):
         self.ponto = ponto
         self.posicao = posicao
         self.indice = indice
-    #é um ponto, inicio ou fim
-    #índice do vetor de segmentos
-    #ordenar eventos pela coordenada x e andar sob eles, se for início coloca segmento na árvola, ordenando pelo valor de y do ponto inicio e vai fazendo o algoritmo
 
 def lista_eventos(L):
-    #Entrada é lista_segmentos
+    #Cria uma lista de eventos a partir de uma lista de segmentos
     eventos = []
     for i in range(len(L)):
-        a = i.inicio
-        b = i.fim
+        a = L[i].inicio
+        b = L[i].fim
         o1 = a.ocorrencia
         o2 = b.ocorrencia
         eventos.append(Evento(a, o1, i))
@@ -69,16 +43,19 @@ def lista_eventos(L):
     return eventos
 
 #Função "sobre_segmento" verifica se um ponto está sobre um segmento formado por outros dois pontos
-#Entrada: lista de pontos [x, y]
 def sobre_segmento(p1, p2, p3):
     #Verifica se o ponto p3 está dentro do intervalo do segmento definido por p1 e p2
-    if((p1[0] <= p3[0]) and (p3[0] <= p2[0])) and (((p1[1] <= p3[1]) and (p3[1] <= p2[1])) or ((p1[1] >= p3[1]) and (p3[1] >= p2[1]))):
+    if((p1.x <= p3.x) and (p3.x <= p2.x)) and (((p1.y <= p3.y) and (p3.y <= p2.y)) or ((p1.y >= p3.y) and (p3.y >= p2.y))):
         return True
     else:
         return False
 
 # Função "interceptam" para ver se dois segmentos se interceptam
-def interceptam(p1, p2, p3, p4):
+def interceptam(segmento1, segmento2):
+    p1 = segmento1.inicio
+    p2 = segmento1.fim
+    p3 = segmento2.inicio
+    p4 = segmento2.fim
     d1 = orientacao(p3, p4, p1)
     d2 = orientacao(p3, p4, p2)
     d3 = orientacao(p1, p2, p3)
@@ -102,14 +79,47 @@ def interceptam(p1, p2, p3, p4):
     else:
         return False
 
-#Função "segmentos_interceptam" usa a função "interceptam" para ver se dois segmentos vizinhos da árvore T se interceptam
-def segmentos_interceptam()
-
-#Função "varredura_linear" usa a função "segmentos_interceptam" para ver se há interseção em um conjunto de segmentos
-def varredura_linear (pontos):
-    segmentos = lista_segmentos(envoltoria_convexa(pontos))
+#Função "varredura_linear" usa a função "interceptam" para ver se há interseção em um conjunto de segmentos
+#Entrada: lista de pontos retornada pela envoltória
+def varredura_linear (lista_pontos):
+    #Pega os segmentos da envoltória
+    segmentos = lista_segmentos(lista_pontos)
+    #Cria uma lista com os eventos dos segmentos da lista
     eventos = lista_eventos(segmentos)
-    
-    #inicializar árvore vazia
-
-#inserir segmento na AVL, n o evento
+    #Ordena os eventos pela coordenada x
+    eventos = eventos.sort()
+    #Cria uma árvore vazia
+    T = AVLTree()
+    #Percorre a lista de eventos
+    for i in range(len(eventos)):
+        j = eventos[i].indice
+        #Se o evento for o início de um segmento, insere segmento na árvore e checa se há interseção 
+        if eventos[i].posicao == "inicio":
+            p = segmentos[j].inicio
+            ind = p.y
+            T.__setitem__(ind, segmentos[j])
+            #checar se existe vizinho e se tem intercessao
+            #Se for o primeiro evento não haverá vizinhos
+            if i == 0:
+                break
+            #ver se tem interseção com vizinho
+            else:
+                try: 
+                    if (interceptam(T.prev_item(ind), T.__getitem__(ind))) or (interceptam(T.__getitem__(ind), T.succ_item(ind))):
+                        r = True
+                except:
+                    print("Não tem vizinho")
+                else: 
+                    return r
+        elif eventos[i].posicao == "fim":
+            #se os dois vizinhos do segmento existem e se interceptam
+            try: 
+                if (interceptam(T.prev_item(ind), T.succ_item(ind))):
+                    r = True
+            except:
+                print("Não tem vizinho")
+            else: 
+                return r
+            #deletar da árvore
+            T.__delitem__(ind)
+    return False
